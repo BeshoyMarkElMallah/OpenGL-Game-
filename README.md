@@ -5,7 +5,9 @@ Game Idea that there is a hawk that wants to eat some food so it has a score and
 
 # Game Instructions
 up arrow => to move the hawk up
+<br>
 down arrow => to move the hawk down
+<br>
 
 right click => to make the food taker larger
 <br>
@@ -13,8 +15,9 @@ left click => to make the food taker smaller
 <br>
 
 a => to move the food taker up
+<br>
 q => to move the food taker down
-
+<br>
 
 
 
