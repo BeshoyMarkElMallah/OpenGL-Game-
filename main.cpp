@@ -241,8 +241,8 @@ void foodTaker()
     glEnd();
 }
 
-float tx = 0.2, ty = 0.2, sx = 0.4, sy = 0.8, foodx = 0.0001, foody = Random_number(-1, 1);
-int score = 0, angle = 0;
+float tx = 0.7, ty = 0.2, sx = 0.4, sy = 0.8, foodx = 0.0001, foody = Random_number(-1, 1);
+int score = 0, angle = 0, lives = 10;
 void specialKeys(int key, int x, int y);
 void mouse(int button, int state, int x, int y);
 void keys(unsigned char key, int x, int y);
@@ -358,7 +358,16 @@ void moveFood()
         if (f[i].x > 1)
         {
             f[i].x = -1;
+            printf("lives--");
+            lives--;
         }
+        if (f[i].x >= tx && f[i].y >= ty)
+        {
+            f[i].x = -1;
+            printf("score++");
+            score++;
+        }
+
         glPopMatrix();
         f[i].x += 0.0001;
     }
@@ -400,6 +409,19 @@ void ScoreDisplay()
     // for (int i = 0; i < strlen(msg1); i++)
     glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10, msg2);
 }
+void GameOverDisplay()
+{
+    glColor3f(1, 0, 0);
+    glRasterPos3f(-0.5, 0, 0);
+    char msg1[] = "GAME OVER ";
+    for (int i = 0; i < strlen(msg1); i++)
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
+    glRasterPos3f(0.0, 0.8, 0);
+    char msg2 = 0;
+    // for (int i = 0; i < strlen(msg1); i++)
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10, msg2);
+    glutSwapBuffers();
+}
 void display(void)
 {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -411,6 +433,10 @@ void display(void)
     moveFood();
 
     moveHawk();
+    if (lives == 0)
+    {
+        glutDisplayFunc(GameOverDisplay);
+    }
     glFlush();
     glutPostRedisplay();
 }
@@ -464,11 +490,11 @@ void specialKeys(int key, int x, int y)
     }
     if (key == GLUT_KEY_RIGHT)
     {
-        tx += 0.1;
+        // tx += 0.1;
     }
     if (key == GLUT_KEY_LEFT)
     {
-        tx -= 0.1;
+        // tx -= 0.1;
     }
 }
 
