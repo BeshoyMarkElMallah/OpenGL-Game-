@@ -32,7 +32,7 @@ void topBody()
 
     glBegin(GL_POLYGON);
     glColor3f(0.690f, 0.425f, 0.0276f);
-    glVertex2f(-0.4f, 0.8f); // 
+    glVertex2f(-0.4f, 0.8f); //
     glVertex2f(0.6f, 0.8f);
     glVertex2f(0.4f, 0.7f);
     glVertex2f(0.4f, -0.4f);
@@ -55,10 +55,10 @@ void bottomBody()
 {
     glBegin(GL_POLYGON);
     glColor3f(0.370f, 0.228f, 0.0148f);
-    glVertex2f(-0.4f, 0.1f);//
+    glVertex2f(-0.4f, 0.1f); //
     glVertex2f(0.4f, 0.1f);
     glVertex2f(0.4f, -0.4f);
-    glVertex2f(-0.4f, -0.4f);//
+    glVertex2f(-0.4f, -0.4f); //
     glEnd();
 
     // draw outline
@@ -224,11 +224,31 @@ void rightLeg()
     glEnd();
 }
 
-float tx = 0.2, ty = 0.2, sx = 0.3, foodx = Random_number(-1, 1), foody = Random_number(-1, 1);
+void foodTaker()
+{
+    glTranslatef(-0.3,-0.8,0.0);
+    glColor3f(0, 1, 0);
+    glBegin(GL_LINES);
+    glVertex2f(0.0, 0.6);
+    glVertex2f(-0.2, 0.4);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glVertex2f(-0.2,0.4);
+    glVertex2f(0.0,0.2);
+    glVertex2f(-0.2,0);
+    glVertex2f(-0.4,0.2);
+    glEnd();
+    
+}
+
+float tx = 0.2, ty = 0.2, sx = 0.4, foodx = Random_number(-1, 1), foody = Random_number(-1, 1);
 int score = 0;
 void specialKeys(int key, int x, int y);
 void mouse(int button, int state, int x, int y);
 void keys(unsigned char key, int x, int y);
+
+
 
 void moveHawk()
 {
@@ -286,7 +306,15 @@ void moveHawk()
     glScalef(sx, sx, 1.0);
     rightLeg();
     glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(tx,ty,0);
+    glScalef(sx,sx,1.0);
+    foodTaker();
+    glPopMatrix();
 }
+
+
 
 void food()
 {
@@ -319,7 +347,7 @@ void moveFood()
             glVertex2f(f[i].x, f[i].y);
             glPopMatrix();
             score++;
-            printf("%d",score);
+            printf("%d", score);
         }
     }
     glEnd();
@@ -361,7 +389,6 @@ void ScoreDisplay()
     char msg2 = 0;
     // for (int i = 0; i < strlen(msg1); i++)
     glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10, msg2);
-    
 }
 void display(void)
 {
@@ -372,7 +399,6 @@ void display(void)
     glMatrixMode(GL_MODELVIEW);
     ScoreDisplay();
     moveFood();
-
 
     moveHawk();
     glFlush();
@@ -404,7 +430,7 @@ void keys(unsigned char key, int x, int y)
     {
         glutDisplayFunc(display);
     }
-    
+
     glutPostRedisplay();
 }
 
@@ -432,11 +458,11 @@ void mouse(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON)
     { // Pause/resume
-      sx -= 0.1;
+        sx -= 0.1;
     }
     if (button == GLUT_RIGHT_BUTTON)
     { // Pause/resume
-      sx += 0.1;
+        sx += 0.1;
     }
     // printf("%d\t%d\n", x, y);
 }
