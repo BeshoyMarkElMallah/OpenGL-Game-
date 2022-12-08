@@ -32,7 +32,7 @@ void topBody()
 
     glBegin(GL_POLYGON);
     glColor3f(0.690f, 0.425f, 0.0276f);
-    glVertex2f(-0.4f, 0.8f); // 
+    glVertex2f(-0.4f, 0.8f); //
     glVertex2f(0.6f, 0.8f);
     glVertex2f(0.4f, 0.7f);
     glVertex2f(0.4f, -0.4f);
@@ -55,10 +55,10 @@ void bottomBody()
 {
     glBegin(GL_POLYGON);
     glColor3f(0.370f, 0.228f, 0.0148f);
-    glVertex2f(-0.4f, 0.1f);//
+    glVertex2f(-0.4f, 0.1f); //
     glVertex2f(0.4f, 0.1f);
     glVertex2f(0.4f, -0.4f);
-    glVertex2f(-0.4f, -0.4f);//
+    glVertex2f(-0.4f, -0.4f); //
     glEnd();
 
     // draw outline
@@ -224,8 +224,25 @@ void rightLeg()
     glEnd();
 }
 
-float tx = 0.2, ty = 0.2, sx = 0.3, foodx = Random_number(-1, 1), foody = Random_number(-1, 1);
-int score = 0;
+void foodTaker()
+{
+    glTranslatef(-0.3, -0.8, 0.0);
+    glColor3f(0, 1, 0);
+    glBegin(GL_LINES);
+    glVertex2f(0.0, 0.6);
+    glVertex2f(-0.2, 0.4);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glVertex2f(-0.2, 0.4);
+    glVertex2f(0.0, 0.2);
+    glVertex2f(-0.2, 0);
+    glVertex2f(-0.4, 0.2);
+    glEnd();
+}
+
+float tx = 0.7, ty = 0.2, sx = 0.4, sy = 0.8, foodx = 0.0001, foody = Random_number(-1, 1);
+int score = 0, angle = 0, lives = 10;
 void specialKeys(int key, int x, int y);
 void mouse(int button, int state, int x, int y);
 void keys(unsigned char key, int x, int y);
@@ -286,10 +303,19 @@ void moveHawk()
     glScalef(sx, sx, 1.0);
     rightLeg();
     glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(tx, ty, 0);
+    glScalef(sx, sx, 1.0);
+    glScalef(sy, sy, 1.0);
+    glRotatef(angle, 0, 0, 1);
+    foodTaker();
+    glPopMatrix();
 }
 
 void food()
 {
+    glColor3f(0, 0, 1);
     glBegin(GL_POLYGON);
     glVertex2f(-0.05f, 0.05f);
     glVertex2f(0.05f, 0.05f);
@@ -298,32 +324,6 @@ void food()
     glEnd();
 }
 
-void moveFood()
-{
-    glPointSize(4);
-    glBegin(GL_POINTS);
-    for (int i = 0; i < 10; i++)
-    {
-
-        glVertex2f(f[i].x, f[i].y);
-        f[i].x += 0.0001;
-        if (f[i].x > 1)
-        {
-            f[i].x = -1;
-        }
-
-        if ((f[i].x == tx) || (f[i].y == ty))
-        {
-            glPushMatrix();
-            glScalef(0.0f, 0.0f, 1.0f);
-            glVertex2f(f[i].x, f[i].y);
-            glPopMatrix();
-            score++;
-            printf("%d",score);
-        }
-    }
-    glEnd();
-}
 
 void welcomeDisplay()
 {
@@ -349,20 +349,74 @@ void welcomeDisplay()
     glutSwapBuffers();
 }
 
-void ScoreDisplay()
+void ScoreDisplay(int score)
 {
     glColor3f(1, 0, 0);
     glRasterPos3f(-0.8, 0.8, 0);
+    char int_str[20];
+    sprintf(int_str,"%d",score);
     char msg1[] = "Score: ";
+    strcat(msg1,int_str);
+    char *string = (msg1);
+
+    while(*string){
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,*string++);
+    }
+}
+void LivesDisplay(int lives)
+{
+    glColor3f(1, 0, 0);
+    glRasterPos3f(0.4, 0.8, 0);
+    char int_str[20];
+    sprintf(int_str,"%d",lives);
+    char msg1[] = "Lives: ";
+    strcat(msg1,int_str);
+    char *string = (msg1);
+
+    while(*string){
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,*string++);
+    }
+}
+void GameOverDisplay()
+{
+    glColor3f(1, 0, 0);
+    glRasterPos3f(-0.5, 0, 0);
+    char msg1[] = "GAME OVER ";
     for (int i = 0; i < strlen(msg1); i++)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
-
     glRasterPos3f(0.0, 0.8, 0);
     char msg2 = 0;
     // for (int i = 0; i < strlen(msg1); i++)
     glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10, msg2);
-    
+    glutSwapBuffers();
 }
+
+void moveFood()
+{
+    
+    for (int i = 0; i < 10; i++)
+    {
+        glPushMatrix();
+        glTranslatef(f[i].x, f[i].y, 0.0);
+        food();
+        if (f[i].x > 1)
+        {
+            f[i].x = -1;
+            printf("lives--");
+            lives--;
+        }
+        if (f[i].x >= tx && f[i].y >= ty)
+        {
+            f[i].x = -1;
+            printf("score++");
+            score++;
+        }
+
+        glPopMatrix();
+        f[i].x += 0.0001;
+    }
+}
+
 void display(void)
 {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -370,11 +424,15 @@ void display(void)
 
     // drawBitmapText((char)score,-0.9,0.9,0.0);
     glMatrixMode(GL_MODELVIEW);
-    ScoreDisplay();
+    ScoreDisplay(score);
+    LivesDisplay(lives);
     moveFood();
 
-
     moveHawk();
+    if (lives == 0)
+    {
+        glutDisplayFunc(GameOverDisplay);
+    }
     glFlush();
     glutPostRedisplay();
 }
@@ -404,7 +462,15 @@ void keys(unsigned char key, int x, int y)
     {
         glutDisplayFunc(display);
     }
-    
+    if (key == 'a')
+    {
+        angle += 10;
+    }
+    if (key == 'q')
+    {
+        angle -= 10;
+    }
+
     glutPostRedisplay();
 }
 
@@ -420,11 +486,11 @@ void specialKeys(int key, int x, int y)
     }
     if (key == GLUT_KEY_RIGHT)
     {
-        tx += 0.1;
+        // tx += 0.1;
     }
     if (key == GLUT_KEY_LEFT)
     {
-        tx -= 0.1;
+        // tx -= 0.1;
     }
 }
 
@@ -432,11 +498,11 @@ void mouse(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON)
     { // Pause/resume
-      sx -= 0.1;
+        sy -= 0.1;
     }
     if (button == GLUT_RIGHT_BUTTON)
     { // Pause/resume
-      sx += 0.1;
+        sy += 0.1;
     }
     // printf("%d\t%d\n", x, y);
 }
