@@ -404,6 +404,7 @@ void keys(unsigned char key, int x, int y)
     {
         glutDisplayFunc(display);
     }
+    
     glutPostRedisplay();
 }
 
@@ -431,11 +432,11 @@ void mouse(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON)
     { // Pause/resume
-      // sx -= 0.1;
+      sx -= 0.1;
     }
     if (button == GLUT_RIGHT_BUTTON)
     { // Pause/resume
-      // sx += 0.1;
+      sx += 0.1;
     }
     // printf("%d\t%d\n", x, y);
 }
