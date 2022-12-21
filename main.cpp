@@ -16,6 +16,7 @@ typedef struct food
 } Food;
 
 Food f[10];
+Food stars[1000];
 
 void drawCircle(float radius, float incrX, float incrY, int i, int iterator)
 {
@@ -313,16 +314,40 @@ void moveHawk()
     glPopMatrix();
 }
 
+
 void food()
 {
-    glColor3f(0, 0, 1);
+    glScalef(0.3,0.3,1.0);
+    // draw Big Cookie
+    glColor3f(0.750, 0.471, 0.0525);
     glBegin(GL_POLYGON);
-    glVertex2f(-0.05f, 0.05f);
-    glVertex2f(0.05f, 0.05f);
-    glVertex2f(0.05f, -0.05f);
-    glVertex2f(-0.05f, -0.05f);
+    drawCircle(0.2, 0, 0, 0, 360);
+    glEnd();
+
+    // draw small cookies
+    glColor3f(0.510, 0.310, 0.0102);
+    glBegin(GL_POLYGON);
+    drawCircle(0.03861, -0.1, 0.1, 0, 360);
+    glEnd();
+    glColor3f(0.510, 0.310, 0.0102);
+    glBegin(GL_POLYGON);
+    drawCircle(0.03861, 0.1, 0.1, 0, 360);
+    glEnd();
+    glColor3f(0.510, 0.310, 0.0102);
+    glBegin(GL_POLYGON);
+    drawCircle(0.03861, 0.1, -0.1, 0, 360);
+    glEnd();
+    glColor3f(0.510, 0.310, 0.0102);
+    glBegin(GL_POLYGON);
+    drawCircle(0.03861, -0.1, -0.1, 0, 360);
+    glEnd();
+    glColor3f(0.510, 0.310, 0.0102);
+    glBegin(GL_POLYGON);
+    drawCircle(0.03861, 0, 0, 0, 360);
     glEnd();
 }
+
+
 
 
 void welcomeDisplay()
@@ -417,13 +442,35 @@ void moveFood()
     }
 }
 
+void background()
+{
+    for (int i = 0; i < 1000; i++)
+    {
+        glPushMatrix();
+        glTranslatef(stars[i].x, stars[i].y, 0.0);
+        glColor3f(Random_number(-1, 1), Random_number(-1, 1), Random_number(-1, 1));
+        glBegin(GL_POINTS);
+        glVertex2f(stars[i].x, stars[i].y);
+        glEnd();
+        if (stars[i].x > 1)
+        {
+            stars[i].x = -1;
+        }
+
+        glPopMatrix();
+        stars[i].x += 0.0001;
+    }
+    // glutPostRedisplay();
+}
+
 void display(void)
 {
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // drawBitmapText((char)score,-0.9,0.9,0.0);
     glMatrixMode(GL_MODELVIEW);
+    background();
     ScoreDisplay(score);
     LivesDisplay(lives);
     moveFood();
@@ -443,6 +490,12 @@ int main(int argc, char **argv)
     {
         f[i].x = Random_number(-1, 1);
         f[i].y = Random_number(-1, 0.7);
+    }
+
+    for (int i = 0; i < 1000; i++)
+    {
+        stars[i].x = Random_number(-1, 1);
+        stars[i].y = Random_number(-1,1 );
     }
     glutInit(&argc, argv);
     glutInitWindowSize(320, 320);
